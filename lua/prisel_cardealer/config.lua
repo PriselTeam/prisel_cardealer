@@ -1,0 +1,1 @@
+Prisel.CarDealer.Config = Prisel.CarDealer.Config or {}
