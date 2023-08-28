@@ -25,3 +25,7 @@ else
     Include("client/cl_network.lua")
 
 end
+
+if SERVER then
+    hook.Run("Prisel.CarDealer.Loaded")
+end
