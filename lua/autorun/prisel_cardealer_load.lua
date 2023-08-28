@@ -1,6 +1,8 @@
 Prisel = Prisel or {}
 
 Prisel.CarDealer = Prisel.CarDealer or {}
+Prisel.CarDealer.Cooldowns = Prisel.CarDealer.Cooldowns or {}
+Prisel.CarDealer.Cars = Prisel.CarDealer.Cars or {}
 
 local function Include(f) return include("prisel_cardealer/"..f) end
 local function AddLuaFile(f) return AddCSLuaFile("prisel_cardealer/"..f) end
