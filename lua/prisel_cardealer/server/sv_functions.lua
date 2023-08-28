@@ -17,10 +17,15 @@ function Prisel.CarDealer:SetupDatabase()
     end
 
     db:connect()
+
+    Prisel.CarDealer:UpdateCarList()
 end
 
 function Prisel.CarDealer:UpdateCarList()
+
     Prisel.CarDealer.Cars = {}
+
+    print("Prisel - Cardealer -> Updating car list...")
 
     local sQuery = "SELECT * FROM prisel_car_configs"
     local q = db:query(sQuery)
@@ -37,12 +42,48 @@ function Prisel.CarDealer:UpdateCarList()
             Prisel.CarDealer.Cars[car.id] = car
         end
 
-        print("Prisel - Cardealer -> Updated car list")
+        print("Reload CarDealer => " .. table.Count(Prisel.CarDealer.Cars) .. " cars loaded")
     end
 
     function q:onError(err)
         print("Prisel - Cardealer -> Error while updating car list: " .. err)
     end
+
+    q:start()
+
+
 end
 
-Prisel.CarDealer:UpdateCarList()
+local PLAYER = FindMetaTable("Player")
+
+function PLAYER:SendCarList(fcCallback)
+    if not IsValid(self) then return end
+
+    net.Start("Prisel:CarDealer:SendCarList")
+        net.WriteUInt(#Prisel.CarDealer.Cars, 32)
+        for _, car in pairs(Prisel.CarDealer.Cars) do
+            net.WriteUInt(car.id, 32)
+            net.WriteString(car.carClass)
+            net.WriteString(car.carLabel)
+            net.WriteUInt(car.price, 32)
+            net.WriteBool(car.isEnabled)
+        end
+    net.Send(self)
+
+    if isfunction(fcCallback) then
+        fcCallback()
+    end
+
+end
+
+function PLAYER:OpenCarDealer()
+    if not IsValid(self) then return end
+
+	pCaller:SendCarList(function()
+        net.Start("Prisel:CarDealer:UseEntity")
+        net.Send(pCaller)
+    end)
+
+end
+
+Prisel.CarDealer:SetupDatabase()

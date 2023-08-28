@@ -32,6 +32,8 @@ function ENT:Use(pCaller)
 
     Prisel.CarDealer.Cooldowns.ENT[pCaller:SteamID64()] = CurTime() + 1.5
 
+	pCaller:SendCarList()
+
     net.Start("Prisel:CarDealer:UseEntity")
     net.Send(pCaller)
 end
